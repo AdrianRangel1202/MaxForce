@@ -3,6 +3,7 @@ from django.db import models
 
 
 
+
 class UserManager(BaseUserManager):
     def main_create_user(self, username, email, password, is_staff, is_superuser, **extra_fields):
         user = self.model(
@@ -24,8 +25,8 @@ class UserManager(BaseUserManager):
 
     
 class User(AbstractBaseUser):
-    username = models.CharField(max_length = 100, unique= True)
-    email = models.EmailField(max_length = 100, unique= True)
+    username = models.CharField(max_length = 150, unique= True)
+    email = models.EmailField(max_length = 150, unique= True)
     password = models.CharField(max_length = 100)
     is_active = models.BooleanField(default = True)
     is_staff = models.BooleanField(default = False)
