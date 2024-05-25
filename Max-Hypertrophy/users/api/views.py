@@ -34,7 +34,7 @@ def filter_user(request, pk = None):
         user_serializer = UserSerializer(user, data = request.data) 
         if user_serializer.is_valid():
             user_serializer.save()
-            return Response(user_serializer.data, status=status.HTTP_202_ACCEPTED)
+            return Response({'Message':'User successfully update'}, status=status.HTTP_202_ACCEPTED)
         return Response(user_serializer.errors)
 
     if request.method == "DELETE":
