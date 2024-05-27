@@ -4,6 +4,6 @@ from .views import UsersViews, filter_user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/', UsersViews),
-    path('id=<int:pk>', filter_user)
+    path('users', UsersViews),
+    path('filter-user/', filter_user)
 ]
