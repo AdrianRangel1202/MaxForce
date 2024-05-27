@@ -6,21 +6,31 @@ from rest_framework.decorators import api_view
 
 
 
-#-------- Funcion interna para filtrar usuarios --------
+#-------- Funcion interna para buscar usuarios --------
 def search_user(request):
-    username = request.GET.get('username')
 
     '''
     retorna todos los usuarios si no se le envia un username por parametro
     '''
-    if username is None:
-        return UserSerializer.Meta.model.objects.all()
+
+    return UserSerializer.Meta.model.objects.filter(is_active = True) 
+    
+
+    
+def filter_user(request):  
+
     '''
     retorna busca el usuario por el username enviado por parametro y retorna solo el primero de la lista
-    URL: /filter-user?username = (username del usuario)
+    URL: /user/?username = username del usuario
     '''
-    return UserSerializer.Meta.model.objects.filter(username = username).first() 
-    
+
+    username = request.GET.get('username')
+    user = UserSerializer.Meta.model.objects.filter(username = username).filter(is_active = True).first()
+    return user 
+
+
+
+# ---------- Funciones de View con Api_View Decorators ------ 
 
 @api_view(["GET", "POST"])
 def UsersViews(request):
@@ -66,17 +76,17 @@ def UsersViews(request):
 
     
 @api_view(["GET","PUT", "DELETE"])
-def filter_user(request): 
+def update_user(request): 
 
     if request.method == "GET":
-        user = search_user(request)
+        user = filter_user(request)
         if user == None:
-            return Response({'message':'User No Exist'})
+            return Response({'message':'User No Exist'}, status=status.HTTP_404_NOT_FOUND)
         user_serializer = UserSerializer(user)
         return Response(user_serializer.data, status=status.HTTP_200_OK)
     
     if request.method == "PUT":
-        user = search_user(request)
+        user = filter_user(request)
         user_serializer = UserSerializer(user, data = request.data) 
         if user_serializer.is_valid():
             user_serializer.save()
@@ -84,8 +94,9 @@ def filter_user(request):
         return Response(user_serializer.errors)
 
     if request.method == "DELETE":
-        user = search_user(request)
-        user.delete()
+        user = filter_user(request)
+        user.is_active = False
+        user.save()
         return Response({'Message':'User successfully deleted'}, status=status.HTTP_200_OK)
    
 
