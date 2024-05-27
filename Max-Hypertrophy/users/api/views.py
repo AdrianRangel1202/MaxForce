@@ -1,5 +1,4 @@
 from .serializers import UserSerializer
-from .models import User
 from rest_framework.response import Response
 from rest_framework.views import  status
 from rest_framework.decorators import api_view
