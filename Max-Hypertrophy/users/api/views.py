@@ -66,9 +66,11 @@ def UsersViews(request):
         user_serializer = UserSerializer(data = request.data)
         if user_serializer.is_valid():
             user_serializer.save()
-            return Response({"Mensaje":"User Create successfully"}, status=status.HTTP_201_CREATED)
+            return Response({"Mensaje":"User Create successfully"},
+                             status=status.HTTP_201_CREATED)
         else:
-             return Response({"Mensaje":"Error Create User"}, status=status.HTTP_401_UNAUTHORIZED)
+             return Response({"Mensaje":"Error Create User"},
+                              status=status.HTTP_401_UNAUTHORIZED)
         
 
 
@@ -80,22 +82,28 @@ def update_user(request):
     if request.method == "GET":
         user = filter_user(request)
         if user == None:
-            return Response({'message':'User No Exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message':'User No Exist'}, 
+                            status=status.HTTP_404_NOT_FOUND)
+        
         user_serializer = UserSerializer(user)
-        return Response(user_serializer.data, status=status.HTTP_200_OK)
+        return Response(user_serializer.data, 
+                        status=status.HTTP_200_OK)
     
     if request.method == "PUT":
         user = filter_user(request)
         user_serializer = UserSerializer(user, data = request.data) 
         if user_serializer.is_valid():
             user_serializer.save()
-            return Response({'Message':'User successfully update'}, status=status.HTTP_202_ACCEPTED)
+            return Response({'Message':'User successfully update'}, 
+                            status=status.HTTP_202_ACCEPTED)
+        
         return Response(user_serializer.errors)
 
     if request.method == "DELETE":
         user = filter_user(request)
         user.is_active = False
         user.save()
-        return Response({'Message':'User successfully deleted'}, status=status.HTTP_200_OK)
+        return Response({'Message':'User successfully deleted'}, 
+                        status=status.HTTP_200_OK)
    
 
