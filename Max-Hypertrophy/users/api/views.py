@@ -1,24 +1,28 @@
 from .serializers import UserSerializer
 from rest_framework.response import Response
-from rest_framework.views import  status, APIView
+from rest_framework.views import  status
+from rest_framework import viewsets
 from .models import User 
 
 
-class UserAPIView(APIView):
+class UserViewSets(viewsets.ModelViewSet):
+
+    
+    serializer_class = UserSerializer
 
     #-------- Funcion interna para buscar usuarios --------
     def get_queryset(self, queryset):
         username = self.request.GET.get('user')
         if username: 
             return User.objects.filter(username = username).filter(is_active = True)
-        
+
         return queryset 
                
 
     # ------- FUNCIONES DE PETICIONES HTTP -----
 
     # Muestra todos los usuarios 
-    def get(self, request):
+    def list(self, request):
         
         if request.method == "GET":
             queryset = User.objects.filter(is_active = True)
@@ -34,9 +38,9 @@ class UserAPIView(APIView):
                 user_serializer = UserSerializer(user)
                 return Response(user_serializer.data, status=status.HTTP_200_OK)
                   
-        
+
     #Inserta usuarios en la base de datos solicitando:    
-    def post(self, request):
+    def create(self, request):
          
         if request.method == "POST":
             user_serializer = UserSerializer(data = request.data)
@@ -50,7 +54,7 @@ class UserAPIView(APIView):
 
 
     # Actualiza un usuario en especifico
-    def put(self, request):
+    def update(self, request):
         if request.method == "PUT":
             user = self.get_queryset(request)
             user_serializer = UserSerializer(user, data = request.data) 
@@ -62,7 +66,7 @@ class UserAPIView(APIView):
             return Response(user_serializer.errors)
         
     # Elimina un usuario 
-    def delete(self, request):
+    def destroy(self, request):
 
         if request.method == "DELETE":
             user = self.get_queryset(request)
