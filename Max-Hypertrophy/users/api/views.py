@@ -1,9 +1,8 @@
-from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework.views import  status
 from rest_framework import viewsets
 from .models import User 
-
+from .serializers import UserSerializer
 
 class UserViewSets(viewsets.ModelViewSet):
 
@@ -21,8 +20,16 @@ class UserViewSets(viewsets.ModelViewSet):
 
     # ------- FUNCIONES DE PETICIONES HTTP -----
 
-    # Muestra todos los usuarios 
     def list(self, request):
+        """
+        El parametro de busquedad del usuario se envia por medio de la URL de la
+        siguente manera "xxx/users/?user=username del usuario". 
+
+        Lista todos los usuarios y busca un usuario en concreto si se le 
+        envia el username como parametro
+
+              
+        """
         
         if request.method == "GET":
             queryset = User.objects.filter(is_active = True)
@@ -39,8 +46,12 @@ class UserViewSets(viewsets.ModelViewSet):
                 return Response(user_serializer.data, status=status.HTTP_200_OK)
                   
 
-    #Inserta usuarios en la base de datos solicitando:    
     def create(self, request):
+
+        """
+        Crea un usuario y lo registra en la base de datos.
+
+        """
          
         if request.method == "POST":
             user_serializer = UserSerializer(data = request.data)
@@ -53,8 +64,17 @@ class UserViewSets(viewsets.ModelViewSet):
                                 status=status.HTTP_401_UNAUTHORIZED)
 
 
-    # Actualiza un usuario en especifico
     def update(self, request):
+        """
+        Actualiza el usuario que se le envie por parametro y con los nuevos
+        datos que se le envie en la el cuerpo de la peticion por medio de un 
+        formato JSON. Los datos obligatorios para la actualizacion son 
+        'username' y 'email' mas el dato a actualizar si este no son los antes
+        mencionados.
+
+        El parametro de busquedad del usuario se envia por medio de la URL de la
+        siguente manera "xxx/users/?user=username del usuario".
+        """
         if request.method == "PUT":
             user = self.get_queryset(request)
             user_serializer = UserSerializer(user, data = request.data) 
@@ -65,8 +85,16 @@ class UserViewSets(viewsets.ModelViewSet):
             
             return Response(user_serializer.errors)
         
-    # Elimina un usuario 
     def destroy(self, request):
+        """
+        
+        El parametro de busquedad del usuario se envia por medio de la URL de la
+        siguente manera "xxx/users/?user=username del usuario".
+
+        Elimina de manera logica al usuario que se le envie por parametro
+        cambiando su estado 'is_active' de True a False. 
+
+        """
 
         if request.method == "DELETE":
             user = self.get_queryset(request)
