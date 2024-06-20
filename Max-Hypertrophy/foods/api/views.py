@@ -1,8 +1,8 @@
-from .serializer import FoodSerializer
 from rest_framework.response import Response 
 from rest_framework.views import  status
 from rest_framework.decorators import api_view
 from .models import Foods
+from .serializer import FoodSerializer
 
 
 
@@ -13,7 +13,7 @@ def FoodViews(request):
     if request.method == "GET":
         food = Foods.objects.all()
         srlz = FoodSerializer(food, many=True)
-        return Response(srlz.data)
+        return Response(srlz.data, status=status.HTTP_200_OK)
 
     if request.method == "POST":
         food_serializer = FoodSerializer(data = request.data)
