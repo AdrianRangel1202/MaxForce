@@ -11,11 +11,14 @@ class UserViewSets(viewsets.ModelViewSet):
 
     #-------- Funcion interna para buscar usuarios --------
     def get_queryset(self, queryset):
-        username = self.request.GET.get('user')
-        if username: 
-            return User.objects.filter(username = username).filter(is_active = True)
+            user = self.request.GET.get('user')
+            if user:
+                return User.objects.filter(username = user).filter(is_active = True).first()
+        
+            return queryset
+        
 
-        return queryset 
+ 
                
 
     # ------- FUNCIONES DE PETICIONES HTTP -----
@@ -34,11 +37,11 @@ class UserViewSets(viewsets.ModelViewSet):
         if request.method == "GET":
             queryset = User.objects.filter(is_active = True)
             user = self.get_queryset(queryset)
-            if user:
-                serializer_users = UserSerializer(user, many=True)
+            if user == queryset:
+                serializer_users = UserSerializer(queryset, many=True)
                 return Response(serializer_users.data, status=status.HTTP_200_OK)
             
-            if not user:
+            elif user == None:
                 return Response({'Error':'User Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
             else:
