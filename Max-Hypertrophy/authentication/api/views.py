@@ -1,18 +1,13 @@
-'''from rest_framework.request import Request
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.tokens import Token
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
 
-from rest_framework.permissions import IsAuthenticated'''
-import requests
+class AuthenticationUSer(APIView):
 
-response = requests.get('http://127.0.0.1:8000/users/?user=adrianrangel')
+    def post(self, request):
+        username= request.data.get('username')
 
-user = response.json()
-print(user[0]['name'])
+        refresh = RefreshToken.for_user(username)
+        return Response(refresh, status=status.HTTP_200_OK)
 
-for user in response.json():
-    print(user)
-'''for key, values in user:
-        print(key, values)'''
